@@ -24,26 +24,38 @@ PPCODE:
         int i = 0;
         char *rstr;
         int ri = 0;
+        int sep = -1;
         SV *ret = newSV(rlen);
         SvPOK_on(ret);
         rstr = SvPV_nolen(ret);
         Zero(rstr, rlen, char);
 
         while (i < len) {
-            int j = i;
+            int j;
             int k, l;
-            U32 v = 0, w;
-            while(j < len && str[j] >= '0' && str[j] <= '9') {
-                v = v * 10 + str[j] - '0';
-                j++;
+            U32 v, lv, w;
+            for (j = i, v = 0;
+                 j < len && str[j] >= '0' && str[j] <= '9';
+                 j++) {
+                lv = v;
+                v = v * 10 + (str[j] - '0');
+                if (v < lv)
+                    Perl_croak(aTHX_ "integer out of range inside OID");
             }
             if (j == i)
                 goto bad_oid;
-            if (j == len || str[j] == '.' || str[j] == '-' || str[j] == ':')
-                i = j + 1;
-            else
-                goto bad_oid;
-
+            if (j < len) {
+                if (sep != -1) {
+                    if (str[j] != sep)
+                        goto bad_oid;
+                }
+                else {
+                    if (isALNUM(str[j]))
+                        goto bad_oid;
+                    sep = str[j];
+                }
+            }
+            i = j + 1;
             if (v == 0xffffffff) {
                 k = 33;
                 v = 3067833784U;
@@ -85,5 +97,5 @@ PPCODE:
         
         bad_oid:
         SvREFCNT_dec(ret);
-        Perl_croak(aTHX_ "bad OID");
+        Perl_croak(aTHX_ "bad OID format");
     }

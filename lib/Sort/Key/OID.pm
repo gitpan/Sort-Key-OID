@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 BEGIN {
-    our $VERSION = '0.01';
+    our $VERSION = '0.03';
 
     require XSLoader;
     XSLoader::load('Sort::Key::OID', $VERSION);
@@ -56,6 +56,18 @@ sorting of OID values.
 
 Also, once this module is loaded, the new type C<oid> will be
 available from L<Sort::Key::Maker>.
+
+Valid OIDs are sequences of unsigned integers separated by some
+symbol. For instance:
+
+   1.2.3.45  # valid
+   1-2-3-45  # valid
+   1 2 3 45  # valid
+   1:2:3:45  # valid
+
+   1..2.3.45 # invalid
+   1  2 3 45 # invalid
+   1:2.3 45  # invalid
 
 =head2 FUNCTIONS
 
