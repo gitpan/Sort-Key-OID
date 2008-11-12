@@ -19,7 +19,7 @@ PPCODE:
         oid = DEFSV;
     {
         STRLEN len;
-        char * str = SvPV(oid, len);
+        const char * str = SvPV(oid, len);
         STRLEN rlen = (len + 3) / 2;
         int i = 0;
         char *rstr;
@@ -42,7 +42,7 @@ PPCODE:
                 if (v < lv)
                     Perl_croak(aTHX_ "integer out of range inside OID");
             }
-            if (j == i)
+            if ((j == i) && (j > 0))
                 goto bad_oid;
             if (j < len) {
                 if (sep != -1) {
