@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Sort-Key-OID
-version:             0.04
+version:             0.05
 abstract:            sort OIDs very fast
 license:             ~
 author:              
